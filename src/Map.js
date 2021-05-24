@@ -1,45 +1,73 @@
 import { useEffect, useRef } from "react";
+import { useDrag } from "react-use-gesture";
 import Two from "two.js";
+import "./Map.css";
 
-const WIDTH = 30;
-const HEIGHT = 10;
+const NUM_COLS = 10;
+const NUM_ROWS = 20;
+const HEX_RADIUS = 50;
+
+const X_SPACING = HEX_RADIUS * 3;
+const Y_SPACING = HEX_RADIUS * 0.85;
+const ODD_ROW_OFFSET = HEX_RADIUS * 1.5;
+const MAP_WIDTH = NUM_COLS * X_SPACING;
+const MAP_HEIGHT = NUM_ROWS * Y_SPACING;
 
 function Map() {
   const divRef = useRef();
+  const two = useRef();
+
   useEffect(() => {
-    const two = new Two({
+    two.current = new Two({
       fullscreen: true,
       autostart: true,
     }).appendTo(divRef.current);
 
     const hexagons = [];
-    for (let y = 0; y < HEIGHT; y++) {
-      for (let x = 0; x < WIDTH; x++) {
-        hexagons.push(two.makePolygon(x * 50, y * 50, 50, 6));
+    const x = 0 - MAP_WIDTH / 2;
+    const y = 0 - MAP_HEIGHT / 2;
+
+    for (let row = 0; row < NUM_ROWS; row++) {
+      const isOddRow = row % 2 === 0;
+      for (let col = 0; col < NUM_COLS; col++) {
+        const hex = two.current.makePolygon(
+          x + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
+          y + row * Y_SPACING,
+          HEX_RADIUS,
+          6
+        );
+        hexagons.push(hex);
       }
     }
 
-    const group = two.makeGroup(...hexagons);
-
-    two.bind("update", function () {
-      group.rotation += 0.001;
+    const group = two.current.makeGroup(...hexagons);
+    two.current.bind("update", function () {
+      // group.rotation += 0.001;
     });
 
-    two.scene.stroke = "#232323";
-    two.scene.linewidth = 3;
-    group.center();
+    two.current.scene.stroke = "#232323";
+    two.current.scene.linewidth = 3;
+
+    // group.center();
+    group.translation.set(two.current.width / 2, two.current.height / 2);
   }, []);
 
-  const drag = (e) => {
-    console.log(e);
-    e.preventDefault();
-  };
-
-  return (
-    <div draggable="true" onDrag={drag} ref={divRef} className="Map">
-      <h1>🗾</h1>
-    </div>
+  const bind = useDrag(
+    ({ offset: [x, y] }) => {
+      two.current.scene.translation.set(x, y);
+    },
+    {
+      bounds: {
+        left: -MAP_WIDTH / 2,
+        right: MAP_WIDTH / 2,
+        top: -MAP_HEIGHT / 2,
+        bottom: MAP_HEIGHT / 2,
+      },
+      // rubberband: true,
+    }
   );
+
+  return <div ref={divRef} className="Map" {...bind()} className="map"></div>;
 }
 
 export default Map;
