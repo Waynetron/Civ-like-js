@@ -1,66 +1,16 @@
 import Paper from "paper";
+import { makeTile } from "../Tile/tile";
 import colors from "../Util/colors";
-
-const NUM_COLS = 10;
-const NUM_ROWS = 20;
-const HEX_RADIUS = 50;
-
-const X_SPACING = HEX_RADIUS * 3;
-const Y_SPACING = HEX_RADIUS * Math.sin((60 * Math.PI) / 180);
-const ODD_ROW_OFFSET = HEX_RADIUS * 1.5;
-const MAP_WIDTH = NUM_COLS * X_SPACING;
-const MAP_HEIGHT = NUM_ROWS * Y_SPACING;
-
-const hexTypes = ["grass", "mountain", "castle", "forest"];
+import { NUM_COLS, NUM_ROWS } from "./map-constants";
 
 let tileGroup;
 let selected = null;
-
-const getRandomHexType = function () {
-  const i = Math.floor(Math.random() * hexTypes.length);
-  return hexTypes[i];
-};
-
-const makeTile = function (col, row) {
-  // render hexes for each tile
-  const startX = 0 - MAP_WIDTH / 2;
-  const startY = 0 - MAP_HEIGHT / 2;
-  const isOddRow = row % 2 === 0;
-  const hex = makeHexPath(
-    startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
-    startY + row * Y_SPACING,
-    HEX_RADIUS
-  );
-
-  const tile = {
-    col,
-    row,
-    type: getRandomHexType(),
-    hex,
-  };
-
-  return tile;
-};
-
-const makeHexPath = function (x, y, radius) {
-  const hex = new Paper.Path.RegularPolygon({
-    center: [x, y],
-    sides: 6,
-    radius: radius,
-    strokeColor: colors.lightGrey,
-    fillColor: colors.white,
-    strokeWidth: 2,
-    rotation: 90,
-  });
-
-  return hex;
-};
 
 const makeTiles = function () {
   const tiles = [];
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      tiles.push(makeTile(col, row));
+      tiles.push(makeTile(col, row, Paper));
     }
   }
   return tiles;
