@@ -1,5 +1,6 @@
+import Paper from "paper";
 import colors from "../Util/colors";
-export const makeHex = function (x, y, radius, Paper) {
+export const makeHex = function (x, y, radius) {
   const hex = new Paper.Path.RegularPolygon({
     center: [x, y],
     sides: 6,

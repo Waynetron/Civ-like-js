@@ -21,15 +21,14 @@ const makeTiles = function () {
   const newTiles = [];
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      // render hexes for each tile
+      // make hex for each tile
       const startX = 0 - MAP_WIDTH / 2;
       const startY = 0 - MAP_HEIGHT / 2;
       const isOddRow = row % 2 === 0;
       const hex = makeHex(
         startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
         startY + row * Y_SPACING,
-        HEX_RADIUS,
-        Paper
+        HEX_RADIUS
       );
 
       newTiles.push(makeTile(col, row, hex));
