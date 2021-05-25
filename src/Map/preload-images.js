@@ -14,7 +14,6 @@ import rabbitSVG from "../Tile/images/rabbit.svg";
 import rabbitSelectedSVG from "../Tile/images/rabbit-selected.svg";
 
 const preloadImages = function ({ onComplete }) {
-  // preload the SVG images
   const imagesToLoad = {
     forest: forestSVG,
     castle: castleSVG,

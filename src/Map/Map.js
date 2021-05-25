@@ -5,11 +5,10 @@ import "./Map.css";
 function Map() {
   const canvasRef = useRef();
 
-  const [tiles, setTiles] = useState([]);
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    initMap(canvasRef.current, setTiles, setSelected);
+    initMap(canvasRef.current, setSelected);
   }, []);
 
   return (

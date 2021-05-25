@@ -45,7 +45,7 @@ export const deselectAll = (tiles) => {
   }
 };
 
-const makeImage = function (x, y, type, images) {
+const makeTileImage = function (x, y, type, images) {
   if (type === "grass") {
     return null;
   }
@@ -66,7 +66,7 @@ export const makeTile = function (col, row, images) {
 
   const hex = makeHex(x, y, HEX_RADIUS);
   const type = getRandomHexType();
-  const image = makeImage(x, y, type, images);
+  const image = makeTileImage(x, y, type, images);
 
   // make tile (and inject hex)
   const tile = {

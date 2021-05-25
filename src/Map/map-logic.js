@@ -19,14 +19,14 @@ const makeTiles = function (images) {
   }
   return newTiles;
 };
-export const initMap = function (canvas, setTiles, setSelected, units) {
+export const initMap = function (canvas, setSelected) {
   Paper.setup(canvas);
   preloadImages({
-    onComplete: (images) => generateMap(setTiles, setSelected, images),
+    onComplete: (images) => generateMap(setSelected, images),
   });
 };
 
-const generateMap = function (setTiles, setSelected, images) {
+const generateMap = function (setSelected, images) {
   hexGroup = new Paper.Group();
   imageGroup = new Paper.Group();
   mapGroup = new Paper.Group();
@@ -85,7 +85,4 @@ const generateMap = function (setTiles, setSelected, images) {
 
   // Render
   Paper.view.draw();
-
-  // update React state in parent container
-  setTiles(tiles);
 };
