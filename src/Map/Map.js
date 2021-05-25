@@ -7,7 +7,6 @@ function Map() {
 
   const [tiles, setTiles] = useState([]);
   const [selected, setSelected] = useState(null);
-  console.log(selected);
 
   useEffect(() => {
     initMap(canvasRef.current, setTiles, setSelected);
