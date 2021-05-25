@@ -1,54 +1,47 @@
 import Paper from "paper";
-import { makeTile } from "../Tile/tile";
+import { makeTile, hover, select, deselect, deselectAll } from "../Tile/tile";
 import colors from "../Util/colors";
-import { NUM_COLS, NUM_ROWS } from "./map-constants";
+import {
+  NUM_COLS,
+  NUM_ROWS,
+  HEX_RADIUS,
+  MAP_WIDTH,
+  MAP_HEIGHT,
+  X_SPACING,
+  Y_SPACING,
+  ODD_ROW_OFFSET,
+} from "./map-constants";
+import { makeHex } from "./hex";
 
 let tileGroup;
 let selected = null;
+let tiles = [];
 
 const makeTiles = function () {
-  const tiles = [];
+  const newTiles = [];
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      tiles.push(makeTile(col, row, Paper));
+      // render hexes for each tile
+      const startX = 0 - MAP_WIDTH / 2;
+      const startY = 0 - MAP_HEIGHT / 2;
+      const isOddRow = row % 2 === 0;
+      const hex = makeHex(
+        startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
+        startY + row * Y_SPACING,
+        HEX_RADIUS,
+        Paper
+      );
+
+      newTiles.push(makeTile(col, row, hex));
     }
   }
-  return tiles;
-};
-
-const hover = (tile, selected) => {
-  tile.hex.strokeColor = colors.darkGrey;
-  tile.hex.strokeWidth = 2;
-  tile.hex.bringToFront();
-
-  // make sure the selected tile remains on top
-  if (selected !== null) {
-    selected.hex.bringToFront();
-  }
-};
-
-const select = (tile) => {
-  tile.hex.strokeColor = colors.yellow;
-  tile.hex.strokeWidth = 3;
-  tile.hex.bringToFront();
-};
-
-const deselect = (tile) => {
-  tile.hex.strokeColor = colors.lightGrey;
-  tile.hex.strokeWidth = 2;
-};
-
-const deselectAll = (tiles) => {
-  for (const tile of tiles) {
-    deselect(tile);
-  }
+  return newTiles;
 };
 
 export const initMap = function (canvas, setTiles, setSelected) {
   Paper.setup(canvas);
   tileGroup = new Paper.Group();
-
-  const tiles = makeTiles();
+  tiles = makeTiles();
 
   // add hexagons to group
   for (const tile of tiles) {

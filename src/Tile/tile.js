@@ -1,12 +1,4 @@
-import {
-  HEX_RADIUS,
-  X_SPACING,
-  Y_SPACING,
-  ODD_ROW_OFFSET,
-  MAP_WIDTH,
-  MAP_HEIGHT,
-  HEX_TYPES,
-} from "../Map/map-constants";
+import { HEX_TYPES } from "../Map/map-constants";
 import colors from "../Util/colors";
 
 const getRandomHexType = function () {
@@ -14,18 +6,34 @@ const getRandomHexType = function () {
   return HEX_TYPES[i];
 };
 
-export const makeTile = function (col, row, Paper) {
-  // render hexes for each tile
-  const startX = 0 - MAP_WIDTH / 2;
-  const startY = 0 - MAP_HEIGHT / 2;
-  const isOddRow = row % 2 === 0;
-  const hex = makeHexPath(
-    startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
-    startY + row * Y_SPACING,
-    HEX_RADIUS,
-    Paper
-  );
+export const hover = (tile, selected) => {
+  tile.hex.strokeColor = colors.darkGrey;
+  tile.hex.strokeWidth = 2;
+  tile.hex.bringToFront();
 
+  // make sure the selected tile remains on top
+  if (selected !== null) {
+    selected.hex.bringToFront();
+  }
+};
+
+export const select = (tile) => {
+  tile.hex.strokeColor = colors.yellow;
+  tile.hex.strokeWidth = 3;
+  tile.hex.bringToFront();
+};
+
+export const deselect = (tile) => {
+  tile.hex.strokeColor = colors.lightGrey;
+  tile.hex.strokeWidth = 2;
+};
+
+export const deselectAll = (tiles) => {
+  for (const tile of tiles) {
+    deselect(tile);
+  }
+};
+export const makeTile = function (col, row, hex) {
   const tile = {
     col,
     row,
@@ -34,18 +42,4 @@ export const makeTile = function (col, row, Paper) {
   };
 
   return tile;
-};
-
-const makeHexPath = function (x, y, radius, Paper) {
-  const hex = new Paper.Path.RegularPolygon({
-    center: [x, y],
-    sides: 6,
-    radius: radius,
-    strokeColor: colors.lightGrey,
-    fillColor: colors.white,
-    strokeWidth: 2,
-    rotation: 90,
-  });
-
-  return hex;
 };
