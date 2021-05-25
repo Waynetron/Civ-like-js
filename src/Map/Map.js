@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Paper from "paper";
 import "./Map.css";
-import { select } from "async";
 
 const NUM_COLS = 10;
 const NUM_ROWS = 20;
