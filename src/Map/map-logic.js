@@ -1,17 +1,7 @@
 import Paper from "paper";
 import { makeTile, hover, select, deselect, deselectAll } from "../Tile/tile";
 import colors from "../Util/colors";
-import {
-  NUM_COLS,
-  NUM_ROWS,
-  HEX_RADIUS,
-  MAP_WIDTH,
-  MAP_HEIGHT,
-  X_SPACING,
-  Y_SPACING,
-  ODD_ROW_OFFSET,
-} from "./map-constants";
-import { makeHex } from "./hex";
+import { NUM_COLS, NUM_ROWS } from "./map-constants";
 
 let tileGroup;
 let selected = null;
@@ -21,17 +11,7 @@ const makeTiles = function () {
   const newTiles = [];
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      // make hex for each tile
-      const startX = 0 - MAP_WIDTH / 2;
-      const startY = 0 - MAP_HEIGHT / 2;
-      const isOddRow = row % 2 === 0;
-      const hex = makeHex(
-        startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0),
-        startY + row * Y_SPACING,
-        HEX_RADIUS
-      );
-
-      newTiles.push(makeTile(col, row, hex));
+      newTiles.push(makeTile(col, row));
     }
   }
   return newTiles;
