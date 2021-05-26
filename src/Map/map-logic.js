@@ -1,8 +1,8 @@
 import Paper from "paper";
+import { preloadImages } from "../Images/images";
 import { makeTile, hover, select, deselect, deselectAll } from "../Tile/tile";
 import colors from "../Util/colors";
 import { NUM_COLS, NUM_ROWS } from "./map-constants";
-import preloadImages from "./preload-images";
 
 let hexGroup;
 let imageGroup;
@@ -10,11 +10,11 @@ let mapGroup;
 let selected = null;
 let tiles = [];
 
-const makeTiles = function (images) {
+const makeTiles = function () {
   const newTiles = [];
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      newTiles.push(makeTile(col, row, images));
+      newTiles.push(makeTile(col, row));
     }
   }
   return newTiles;
@@ -22,18 +22,18 @@ const makeTiles = function (images) {
 export const initMap = function (canvas, setSelected) {
   Paper.setup(canvas);
   preloadImages({
-    onComplete: (images) => generateMap(setSelected, images),
+    onComplete: () => generateMap(setSelected),
   });
 };
 
-const generateMap = function (setSelected, images) {
+const generateMap = function (setSelected) {
   hexGroup = new Paper.Group();
   imageGroup = new Paper.Group();
   mapGroup = new Paper.Group();
 
   mapGroup.addChildren([hexGroup, imageGroup]);
 
-  tiles = makeTiles(images);
+  tiles = makeTiles();
 
   for (const tile of tiles) {
     hexGroup.addChild(tile.hex);

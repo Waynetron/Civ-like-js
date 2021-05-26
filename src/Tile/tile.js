@@ -1,4 +1,5 @@
 import Paper from "paper";
+import { images } from "../Images/images";
 import {
   HEX_TYPE_DISTRIBUTION,
   MAP_WIDTH,
@@ -45,7 +46,7 @@ export const deselectAll = (tiles) => {
   }
 };
 
-const makeTileImage = function (x, y, type, images) {
+const makeTileImage = function (x, y, type) {
   if (type === "grass") {
     return null;
   }
@@ -56,7 +57,7 @@ const makeTileImage = function (x, y, type, images) {
   image.translate(x - 79, y - 69);
   return image;
 };
-export const makeTile = function (col, row, images) {
+export const makeTile = function (col, row) {
   // make hex
   const startX = 0 - MAP_WIDTH / 2;
   const startY = 0 - MAP_HEIGHT / 2;
@@ -66,7 +67,7 @@ export const makeTile = function (col, row, images) {
 
   const hex = makeHex(x, y, HEX_RADIUS);
   const type = getRandomHexType();
-  const image = makeTileImage(x, y, type, images);
+  const image = makeTileImage(x, y, type);
 
   // make tile (and inject hex)
   const tile = {

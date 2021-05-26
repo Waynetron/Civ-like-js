@@ -16,6 +16,7 @@ function Map() {
       {selected && (
         <div className="selection-info">
           <h2>Selected: {selected.type}</h2>
+          <button>Build unit</button>
         </div>
       )}
       <canvas ref={canvasRef} id="canvas" resize="true" />
