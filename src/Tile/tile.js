@@ -1,17 +1,9 @@
 import { images } from "../Images/images";
-import {
-  HEX_TYPE_DISTRIBUTION,
-  MAP_WIDTH,
-  MAP_HEIGHT,
-  X_SPACING,
-  Y_SPACING,
-  ODD_ROW_OFFSET,
-  HEX_RADIUS,
-} from "../Map/map-constants";
+import { HEX_TYPE_DISTRIBUTION, HEX_RADIUS } from "../Map/map-constants";
 import colors from "../Util/colors";
 import { makeHex } from "./hex";
 
-const getRandomHexType = function () {
+const getRandomType = function () {
   const i = Math.floor(Math.random() * HEX_TYPE_DISTRIBUTION.length);
   return HEX_TYPE_DISTRIBUTION[i];
 };
@@ -28,26 +20,11 @@ const makeTileImage = function (x, y, type) {
   return image;
 };
 
-const deselectAll = function (tiles) {
-  for (const tile of tiles) {
-    tile.deselect();
-  }
-};
-export const makeTile = function (col, row, state, setSelected) {
-  // make hex
-  const startX = 0 - MAP_WIDTH / 2;
-  const startY = 0 - MAP_HEIGHT / 2;
-  const isOddRow = row % 2 === 0;
-  const x = startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0);
-  const y = startY + row * Y_SPACING;
-
-  const type = getRandomHexType();
+export const makeTile = function (position, state, onSelect) {
+  const [x, y] = position;
+  const type = getRandomType();
   const image = makeTileImage(x, y, type);
-
-  // make tile (and inject hex)
   const tile = {
-    col,
-    row,
     type,
     image,
   };
@@ -65,14 +42,14 @@ export const makeTile = function (col, row, state, setSelected) {
   };
 
   tile.hover = function () {
-    if (state.selectedTile !== tile) {
+    if (state.selected !== tile) {
       tile.hex.strokeColor = colors.lightYellow;
       tile.hex.strokeWidth = 5;
       tile.hex.bringToFront();
     }
 
-    // make sure the selected tile remains on top
-    state.selectedTile?.hex.bringToFront();
+    // make sure the selected tile remains on top (if it's a tile)
+    state.selected?.hex?.bringToFront();
   };
 
   tile.hex = makeHex(x, y, HEX_RADIUS);
@@ -82,24 +59,19 @@ export const makeTile = function (col, row, state, setSelected) {
   };
 
   tile.hex.onMouseLeave = function (event) {
-    if (state.selectedTile !== tile) {
+    if (state.selected !== tile) {
       tile.deselect();
     }
   };
 
   tile.hex.onClick = function (event) {
-    if (state.selectedTile === tile) {
+    if (state.selected === tile) {
       tile.hex.strokeColor = colors.darkGrey;
       tile.hex.strokeWidth = 2;
-      tile.deselect(); // update internal visuals
-      state.selectedTile = null; // update internal selected state
-      setSelected(null); // update external state (React)
+      onSelect(null);
     } else {
-      deselectAll(state.tiles);
-
-      tile.select(); // update internal visuals
-      state.selectedTile = tile; // update internal selected state
-      setSelected(tile); // update external state (React)
+      onSelect(tile);
+      tile.select();
     }
   };
 
