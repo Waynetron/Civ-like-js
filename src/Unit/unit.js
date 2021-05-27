@@ -40,13 +40,17 @@ export const makeUnit = function (position, state, onSelect) {
     unit.scale.set(1.4, 1.4);
   };
 
+  unit.hover = function () {
+    unit.scale.set(1.1, 1.1);
+  };
+
   unit.deselect = function () {
     unit.scale.set(1, 1);
   };
 
   unit.image.onMouseEnter = function (event) {
     if (state.selected !== unit) {
-      unit.scale.set(1.1, 1.1);
+      unit.hover();
     }
   };
 
@@ -58,7 +62,8 @@ export const makeUnit = function (position, state, onSelect) {
 
   unit.image.onClick = function (event) {
     if (state.selected === unit) {
-      unit.deselect();
+      onSelect(null);
+      unit.hover();
     } else {
       onSelect(unit);
       unit.select();
