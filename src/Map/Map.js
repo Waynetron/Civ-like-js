@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { initMap } from "./map-logic";
 import "./Map.css";
 
-function Map() {
-  const canvasRef = useRef();
-
+function Map({ startBattle }) {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    initMap(canvasRef.current, setSelected);
+    initMap(setSelected);
   }, []);
 
   return (
@@ -16,10 +14,9 @@ function Map() {
       {selected && (
         <div className="selection-info">
           <h2>Selected: {selected.type}</h2>
-          <button>Build unit</button>
+          <button onClick={startBattle}>Build unit</button>
         </div>
       )}
-      <canvas ref={canvasRef} id="canvas" resize="true" />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import Paper from "paper";
-import { preloadImages } from "../Images/images";
 import { makeTile } from "../Tile/tile";
 import { NUM_COLS, NUM_ROWS } from "./map-constants";
 
@@ -24,14 +23,10 @@ const makeTiles = function (setSelected) {
   }
   return newTiles;
 };
-export const initMap = function (canvas, setSelected) {
-  Paper.setup(canvas);
-  preloadImages({
-    onComplete: () => generateMap(setSelected),
-  });
-};
 
-const generateMap = function (setSelected) {
+export const initMap = function (setSelected) {
+  Paper.project.clear();
+
   hexGroup = new Paper.Group();
   imageGroup = new Paper.Group();
   mapGroup = new Paper.Group();

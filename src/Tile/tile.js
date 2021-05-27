@@ -1,4 +1,3 @@
-import Paper from "paper";
 import { images } from "../Images/images";
 import {
   HEX_TYPE_DISTRIBUTION,
