@@ -3,8 +3,9 @@ import colors from "../Util/colors";
 
 const makeUnitImage = function (x, y, type) {
   const image = images[type].clone();
+
   const selectedImage = images[`${type}Selected`].clone();
-  image.translate(x - 37, y - 45);
+  image.translate(x - image.bounds.width / 2, y - image.bounds.height / 2);
   return [image, selectedImage];
 };
 

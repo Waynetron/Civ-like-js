@@ -16,7 +16,7 @@ const makeTileImage = function (x, y, type) {
   const image = images[type].clone();
   // disables mouse interactions (to prevent from blocking clicks on the hex underneath)
   image.locked = true;
-  image.translate(x - 79, y - 69);
+  image.translate(x - image.bounds.width / 2, y - image.bounds.height / 2);
   return image;
 };
 
