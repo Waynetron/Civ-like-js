@@ -17,35 +17,6 @@ const getRandomHexType = function () {
   return HEX_TYPE_DISTRIBUTION[i];
 };
 
-export const hover = (tile, selected) => {
-  tile.hex.strokeColor = colors.lightYellow;
-  tile.hex.strokeWidth = 5;
-  tile.hex.bringToFront();
-
-  // make sure the selected tile remains on top
-  if (selected !== null) {
-    selected.hex.bringToFront();
-  }
-};
-
-export const select = (tile) => {
-  tile.hex.strokeColor = colors.yellow;
-  tile.hex.strokeWidth = 5;
-  tile.hex.bringToFront();
-};
-
-export const deselect = (tile) => {
-  tile.hex.strokeColor = colors.lightGrey;
-  tile.hex.fillColor = colors.white;
-  tile.hex.strokeWidth = 2;
-};
-
-export const deselectAll = (tiles) => {
-  for (const tile of tiles) {
-    deselect(tile);
-  }
-};
-
 const makeTileImage = function (x, y, type) {
   if (type === "grass") {
     return null;
@@ -57,7 +28,13 @@ const makeTileImage = function (x, y, type) {
   image.translate(x - 79, y - 69);
   return image;
 };
-export const makeTile = function (col, row) {
+
+const deselectAll = function (tiles) {
+  for (const tile of tiles) {
+    tile.deselect();
+  }
+};
+export const makeTile = function (col, row, state, setSelected) {
   // make hex
   const startX = 0 - MAP_WIDTH / 2;
   const startY = 0 - MAP_HEIGHT / 2;
@@ -65,7 +42,6 @@ export const makeTile = function (col, row) {
   const x = startX + col * X_SPACING + (isOddRow ? ODD_ROW_OFFSET : 0);
   const y = startY + row * Y_SPACING;
 
-  const hex = makeHex(x, y, HEX_RADIUS);
   const type = getRandomHexType();
   const image = makeTileImage(x, y, type);
 
@@ -74,8 +50,58 @@ export const makeTile = function (col, row) {
     col,
     row,
     type,
-    hex,
     image,
+  };
+
+  tile.select = function () {
+    tile.hex.strokeColor = colors.yellow;
+    tile.hex.strokeWidth = 5;
+    tile.hex.bringToFront();
+  };
+
+  tile.deselect = function () {
+    tile.hex.strokeColor = colors.lightGrey;
+    tile.hex.fillColor = colors.white;
+    tile.hex.strokeWidth = 2;
+  };
+
+  tile.hover = function () {
+    if (state.selectedTile !== tile) {
+      tile.hex.strokeColor = colors.lightYellow;
+      tile.hex.strokeWidth = 5;
+      tile.hex.bringToFront();
+    }
+
+    // make sure the selected tile remains on top
+    state.selectedTile?.hex.bringToFront();
+  };
+
+  tile.hex = makeHex(x, y, HEX_RADIUS);
+
+  tile.hex.onMouseEnter = function (event) {
+    tile.hover();
+  };
+
+  tile.hex.onMouseLeave = function (event) {
+    if (state.selectedTile !== tile) {
+      tile.deselect();
+    }
+  };
+
+  tile.hex.onClick = function (event) {
+    if (state.selectedTile === tile) {
+      tile.hex.strokeColor = colors.darkGrey;
+      tile.hex.strokeWidth = 2;
+      tile.deselect(); // update internal visuals
+      state.selectedTile = null; // update internal selected state
+      setSelected(null); // update external state (React)
+    } else {
+      deselectAll(state.tiles);
+
+      tile.select(); // update internal visuals
+      state.selectedTile = tile; // update internal selected state
+      setSelected(tile); // update external state (React)
+    }
   };
 
   return tile;
