@@ -61,10 +61,19 @@ const makeUnits = function (onSelect) {
 export const initMap = function (setSelected) {
   Paper.project.clear();
 
-  hexGroup = new Paper.Group();
-  imageGroup = new Paper.Group();
-  unitGroup = new Paper.Group();
-  mapGroup = new Paper.Group();
+  // Apply matix is necessary to get sane relative coordinate systems within all the children
+  hexGroup = new Paper.Group({
+    applyMatrix: false,
+  });
+  imageGroup = new Paper.Group({
+    applyMatrix: false,
+  });
+  unitGroup = new Paper.Group({
+    applyMatrix: false,
+  });
+  mapGroup = new Paper.Group({
+    applyMatrix: false,
+  });
 
   mapGroup.addChildren([hexGroup, imageGroup, unitGroup]);
 
@@ -93,7 +102,7 @@ export const initMap = function (setSelected) {
 
   state.units = makeUnits(onSelect);
   for (const unit of state.units) {
-    unitGroup.addChild(unit.image);
+    unitGroup.addChild(unit.group);
   }
 
   mapGroup.translate(

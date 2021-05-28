@@ -1,22 +1,52 @@
+import Paper from "paper";
 import { images } from "../Images/images";
 import colors from "../Util/colors";
 
-const makeUnitImage = function (x, y, type) {
+const makeUnitImages = function (type) {
   const image = images[type].clone();
-
   const selectedImage = images[`${type}Selected`].clone();
-  image.translate(x - image.bounds.width / 2, y - image.bounds.height / 2);
+  for (const img of [image, selectedImage]) {
+    img.applyMatrix = false;
+    img.translate(0 - img.bounds.width / 2, 0 - img.bounds.height / 2);
+  }
+
+  selectedImage.visible = false;
+
   return [image, selectedImage];
+};
+
+const makeShadow = function () {
+  var circle = new Paper.Path.Circle({
+    center: [0, 30],
+    radius: 12,
+    fillColor: "black",
+    opacity: 0,
+  });
+
+  circle.scale(2.5, 1);
+
+  return circle;
 };
 
 export const makeUnit = function (position, state, onSelect) {
   const [x, y] = position;
   const type = "skeleton";
-  const [image, selectedImage] = makeUnitImage(x, y, type);
+  const [image, selectedImage] = makeUnitImages(type);
+  const shadow = makeShadow();
+  const group = new Paper.Group({
+    applyMatrix: false,
+  });
+  const sprite = new Paper.Group({
+    applyMatrix: false,
+  });
+  sprite.addChildren([image, selectedImage]);
+  group.translate(x, y - 10);
+  group.addChildren([shadow, sprite]);
 
   // make tile (and inject hex)
   const unit = {
     type,
+    group,
     image,
     selectedImage,
   };
@@ -26,10 +56,10 @@ export const makeUnit = function (position, state, onSelect) {
     y: 1,
     set: function (x, y) {
       // reset scale
-      image.scale(1 / this.x, 1 / this.y);
+      sprite.scale(1 / this.x, 1 / this.y);
 
       // apply new scale
-      image.scale(x, y);
+      sprite.scale(x, y);
 
       this.x = x;
       this.y = y;
@@ -37,7 +67,29 @@ export const makeUnit = function (position, state, onSelect) {
   };
 
   unit.select = function () {
-    unit.scale.set(1.4, 1.4);
+    unit.scale.set(1.1, 1.1);
+    image.visible = false;
+    selectedImage.visible = true;
+
+    sprite.tween(
+      {
+        "position.y": 0 - 20,
+      },
+      {
+        easing: "easeInOutCubic",
+        duration: 100,
+      }
+    );
+
+    shadow.tween(
+      {
+        opacity: 0.15,
+      },
+      {
+        easing: "easeInOutCubic",
+        duration: 100,
+      }
+    );
   };
 
   unit.hover = function () {
@@ -46,21 +98,42 @@ export const makeUnit = function (position, state, onSelect) {
 
   unit.deselect = function () {
     unit.scale.set(1, 1);
+    image.visible = true;
+    selectedImage.visible = false;
+    sprite.tween(
+      {
+        "position.y": 0,
+      },
+      {
+        easing: "easeInOutCubic",
+        duration: 100,
+      }
+    );
+
+    shadow.tween(
+      {
+        opacity: 0,
+      },
+      {
+        easing: "easeInOutCubic",
+        duration: 100,
+      }
+    );
   };
 
-  unit.image.onMouseEnter = function (event) {
+  group.onMouseEnter = function (event) {
     if (state.selected !== unit) {
       unit.hover();
     }
   };
 
-  unit.image.onMouseLeave = function (event) {
+  group.onMouseLeave = function (event) {
     if (state.selected !== unit) {
       unit.scale.set(1, 1);
     }
   };
 
-  unit.image.onClick = function (event) {
+  group.onClick = function (event) {
     if (state.selected === unit) {
       onSelect(null);
       unit.hover();
