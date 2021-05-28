@@ -34,12 +34,12 @@ const getPosition = function (col, row) {
   return [x, y];
 };
 
-const makeTiles = function (onSelect) {
+const makeTiles = function (onSelect, onMove) {
   const newTiles = [];
 
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      newTiles.push(makeTile(getPosition(col, row), state, onSelect));
+      newTiles.push(makeTile(getPosition(col, row), state, onSelect, onMove));
     }
   }
   return newTiles;
@@ -92,7 +92,11 @@ export const initMap = function (setSelected) {
     state.selected = newSelected; // update internal state
   };
 
-  state.tiles = makeTiles(onSelect);
+  const onMove = function (unit, tile) {
+    unit.moveable.moveTo(tile);
+  };
+
+  state.tiles = makeTiles(onSelect, onMove);
   for (const tile of state.tiles) {
     hexGroup.addChild(tile.hex);
     if (tile.image) {

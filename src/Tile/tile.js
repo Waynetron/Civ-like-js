@@ -20,7 +20,7 @@ const makeTileImage = function (x, y, type) {
   return image;
 };
 
-export const makeTile = function (position, state, onSelect) {
+export const makeTile = function (position, state, onSelect, onMove) {
   const [x, y] = position;
   const type = getRandomType();
   const image = makeTileImage(x, y, type);
@@ -50,6 +50,10 @@ export const makeTile = function (position, state, onSelect) {
 
     // make sure the selected tile remains on top (if it's a tile)
     state.selected?.hex?.bringToFront();
+
+    if (state.selected?.moveable) {
+      //
+    }
   };
 
   tile.hex = makeHex(x, y, HEX_RADIUS);
@@ -66,10 +70,19 @@ export const makeTile = function (position, state, onSelect) {
 
   tile.hex.onClick = function (event) {
     if (state.selected === tile) {
+      // tile already selected, so deselect
       tile.hex.strokeColor = colors.darkGrey;
       tile.hex.strokeWidth = 2;
       onSelect(null);
+    } else if (state.selected === null) {
+      // nothing is selected, select the tile
+      onSelect(tile);
+      tile.select();
+    } else if (state.selected.moveable) {
+      // selected item can move, so move it to this tile
+      onMove(state.selected, tile);
     } else {
+      // some other tiles is selected, select the new tile
       onSelect(tile);
       tile.select();
     }

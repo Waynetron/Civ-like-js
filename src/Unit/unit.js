@@ -1,5 +1,6 @@
 import Paper from "paper";
 import { images } from "../Images/images";
+import { makeMoveable } from "../Map/moveable";
 import colors from "../Util/colors";
 
 const makeUnitImages = function (type) {
@@ -50,6 +51,8 @@ export const makeUnit = function (position, state, onSelect) {
     image,
     selectedImage,
   };
+
+  unit.moveable = makeMoveable(unit, 1);
 
   unit.scale = {
     x: 1,
