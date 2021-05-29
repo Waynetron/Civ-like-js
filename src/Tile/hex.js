@@ -9,6 +9,7 @@ export const makeHex = function (x, y, radius) {
     fillColor: colors.white,
     strokeWidth: 2,
     rotation: 90,
+    applyMatrix: false,
   });
 
   return hex;

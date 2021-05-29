@@ -39,7 +39,8 @@ const makeTiles = function (onSelect, onMove) {
 
   for (let row = 0; row < NUM_ROWS; row++) {
     for (let col = 0; col < NUM_COLS; col++) {
-      newTiles.push(makeTile(getPosition(col, row), state, onSelect, onMove));
+      const position = getPosition(col, row);
+      newTiles.push(makeTile(position, state, onSelect, onMove));
     }
   }
   return newTiles;
@@ -52,8 +53,6 @@ const makeUnits = function (onSelect) {
   const position = getPosition(col, row);
   const unit = makeUnit(position, state, onSelect);
   newUnits.push(unit);
-
-  console.log(newUnits);
 
   return newUnits;
 };
@@ -93,7 +92,11 @@ export const initMap = function (setSelected) {
   };
 
   const onMove = function (unit, tile) {
-    unit.moveable.moveTo(tile);
+    unit.moveTo(tile.getPosition());
+    unit.deselect();
+    onSelect(null);
+    // the mouse is still over the unit at this point so keep the hovered visual on
+    unit.hover();
   };
 
   state.tiles = makeTiles(onSelect, onMove);

@@ -29,8 +29,7 @@ const makeShadow = function () {
   return circle;
 };
 
-export const makeUnit = function (position, state, onSelect) {
-  const [x, y] = position;
+export const makeUnit = function (startPosition, state, onSelect) {
   const type = "skeleton";
   const [image, selectedImage] = makeUnitImages(type);
   const shadow = makeShadow();
@@ -41,8 +40,8 @@ export const makeUnit = function (position, state, onSelect) {
     applyMatrix: false,
   });
   sprite.addChildren([image, selectedImage]);
-  group.translate(x, y - 10);
   group.addChildren([shadow, sprite]);
+  group.translate(startPosition);
 
   // make tile (and inject hex)
   const unit = {
@@ -50,6 +49,14 @@ export const makeUnit = function (position, state, onSelect) {
     group,
     image,
     selectedImage,
+  };
+
+  unit.moveTo = function (newPosition) {
+    const delta = [
+      newPosition.x - group.position.x,
+      newPosition.y - group.position.y - 10,
+    ];
+    group.translate(delta);
   };
 
   unit.moveable = makeMoveable(unit, 1);
@@ -139,6 +146,8 @@ export const makeUnit = function (position, state, onSelect) {
   group.onClick = function (event) {
     if (state.selected === unit) {
       onSelect(null);
+      unit.deselect();
+      // the mouse is still over the unit at this point so keep the hovered visual on
       unit.hover();
     } else {
       onSelect(unit);

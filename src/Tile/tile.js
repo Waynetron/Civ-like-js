@@ -29,6 +29,10 @@ export const makeTile = function (position, state, onSelect, onMove) {
     image,
   };
 
+  tile.getPosition = function () {
+    return tile.hex.position;
+  };
+
   tile.select = function () {
     tile.hex.strokeColor = colors.yellow;
     tile.hex.strokeWidth = 5;
