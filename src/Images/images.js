@@ -9,8 +9,10 @@ import num4SVG from "./images/num4.svg";
 import num5SVG from "./images/num5.svg";
 import num6SVG from "./images/num6.svg";
 import skeletonSVG from "./images/skeleton.svg";
+import skeletonHoverSVG from "./images/skeleton-hover.svg";
 import skeletonSelectedSVG from "./images/skeleton-selected.svg";
 import rabbitSVG from "./images/rabbit.svg";
+import rabbitHoverSVG from "./images/rabbit-hover.svg";
 import rabbitSelectedSVG from "./images/rabbit-selected.svg";
 export const images = {};
 export const preloadImages = function ({ onComplete }) {
@@ -25,8 +27,10 @@ export const preloadImages = function ({ onComplete }) {
     num5: num5SVG,
     num6: num6SVG,
     skeleton: skeletonSVG,
+    skeletonHover: skeletonHoverSVG,
     skeletonSelected: skeletonSelectedSVG,
     rabbit: rabbitSVG,
+    rabbitHover: rabbitHoverSVG,
     rabbitSelected: rabbitSelectedSVG,
   };
 

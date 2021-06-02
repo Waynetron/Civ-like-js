@@ -90,8 +90,6 @@ export const initMap = function (setSelected) {
     unit.moveTo(tile.getPosition());
     unit.deselect();
     onSelect(null);
-    // the mouse is still over the unit at this point so keep the hovered visual on
-    unit.hover();
   };
 
   state.tiles = makeTiles(onSelect, onMove);

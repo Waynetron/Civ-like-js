@@ -4,23 +4,25 @@ import { makeMoveable } from "../Map/moveable";
 
 const makeUnitImages = function (type) {
   const image = images[type].clone();
+  const hoverImage = images[`${type}Hover`].clone();
   const selectedImage = images[`${type}Selected`].clone();
 
   selectedImage.visible = false;
+  hoverImage.visible = false;
 
-  return [image, selectedImage];
+  return [image, hoverImage, selectedImage];
 };
 
 export const makeUnit = function (startPosition, state, onSelect) {
   const type = "skeleton";
-  const [image, selectedImage] = makeUnitImages(type);
+  const [image, hoverImage, selectedImage] = makeUnitImages(type);
   const group = new Paper.Group({
     applyMatrix: false,
   });
   const sprite = new Paper.Group({
     applyMatrix: false,
   });
-  sprite.addChildren([image, selectedImage]);
+  sprite.addChildren([selectedImage, image, hoverImage]);
   sprite.position = new Paper.Point(0, 0);
   group.addChild(sprite);
   group.position = startPosition;
@@ -40,9 +42,8 @@ export const makeUnit = function (startPosition, state, onSelect) {
   unit.moveable = makeMoveable(unit, 1);
 
   unit.select = function () {
-    sprite.scaling = new Paper.Point(1.2, 1.2);
-    image.visible = false;
     selectedImage.visible = true;
+    sprite.scaling = new Paper.Point(1.2, 1.2);
 
     sprite.tween(
       { scaling: [1.1, 1.1] },
@@ -50,13 +51,15 @@ export const makeUnit = function (startPosition, state, onSelect) {
     );
   };
 
-  unit.hover = function () {
-    sprite.scaling = new Paper.Point(1.1, 1.1);
-  };
-
   unit.deselect = function () {
-    image.visible = true;
     selectedImage.visible = false;
+
+    // ideally, we should check to see if the mouse is over the sprite or not
+    // when deselecting and then decide whether or not to show the hovered
+    // state.
+    image.visible = true;
+    hoverImage.visible = false;
+
     sprite.scaling = new Paper.Point(0.9, 0.9);
     sprite.tween(
       { scaling: [1, 1] },
@@ -65,14 +68,14 @@ export const makeUnit = function (startPosition, state, onSelect) {
   };
 
   group.onMouseEnter = function (event) {
-    if (state.selected !== unit) {
-      unit.hover();
-    }
+    image.visible = false;
+    hoverImage.visible = true;
   };
 
   group.onMouseLeave = function (event) {
     if (state.selected !== unit) {
-      sprite.scaling = new Paper.Point(1, 1);
+      image.visible = true;
+      hoverImage.visible = false;
     }
   };
 
@@ -80,8 +83,6 @@ export const makeUnit = function (startPosition, state, onSelect) {
     if (state.selected === unit) {
       onSelect(null);
       unit.deselect();
-      // the mouse is still over the unit at this point so keep the hovered visual on
-      unit.hover();
     } else {
       onSelect(unit);
       unit.select();
