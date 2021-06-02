@@ -33,6 +33,7 @@ export const preloadImages = function ({ onComplete }) {
   for (const [type, svg] of Object.entries(imagesToLoad)) {
     Paper.project.importSVG(svg, {
       onLoad: (image) => {
+        image.applyMatrix = false;
         images[type] = image;
         if (
           Object.entries(images).length === Object.entries(imagesToLoad).length

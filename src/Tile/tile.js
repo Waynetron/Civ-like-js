@@ -30,7 +30,7 @@ export const makeTile = function (position, state, onSelect, onMove) {
   };
 
   tile.getPosition = function () {
-    return tile.hex.position;
+    return position;
   };
 
   tile.select = function () {

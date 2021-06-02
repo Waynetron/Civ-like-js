@@ -1,15 +1,10 @@
 import Paper from "paper";
 import { images } from "../Images/images";
 import { makeMoveable } from "../Map/moveable";
-import colors from "../Util/colors";
 
 const makeUnitImages = function (type) {
   const image = images[type].clone();
   const selectedImage = images[`${type}Selected`].clone();
-  for (const img of [image, selectedImage]) {
-    img.applyMatrix = false;
-    img.translate(0 - img.bounds.width / 2, 0 - img.bounds.height / 2);
-  }
 
   selectedImage.visible = false;
 
@@ -21,7 +16,9 @@ const makeShadow = function () {
     center: [0, 30],
     radius: 12,
     fillColor: "black",
-    opacity: 0,
+    opacity: 0.15,
+    visible: false,
+    applyMatrix: false,
   });
 
   circle.scale(2.5, 1);
@@ -40,8 +37,9 @@ export const makeUnit = function (startPosition, state, onSelect) {
     applyMatrix: false,
   });
   sprite.addChildren([image, selectedImage]);
+  sprite.position = new Paper.Point(0, 0);
   group.addChildren([shadow, sprite]);
-  group.translate(startPosition);
+  group.position = startPosition;
 
   // make tile (and inject hex)
   const unit = {
@@ -52,83 +50,46 @@ export const makeUnit = function (startPosition, state, onSelect) {
   };
 
   unit.moveTo = function (newPosition) {
-    const delta = [
-      newPosition.x - group.position.x,
-      newPosition.y - group.position.y - 10,
-    ];
-    group.translate(delta);
+    // When the unit was selected, the sprite shifts up a little,
+    // the problem is, this inadvertedly affects the positioning of the group,
+    // so if the group is moved whilst the sprite is offset, it doesn't end up lining
+    // up quite right.
+    // The solution here is to reset the sprite position before moving the group.
+    sprite.position = new Paper.Point(0, 0);
+    group.position = newPosition;
   };
 
   unit.moveable = makeMoveable(unit, 1);
 
-  unit.scale = {
-    x: 1,
-    y: 1,
-    set: function (x, y) {
-      // reset scale
-      sprite.scale(1 / this.x, 1 / this.y);
-
-      // apply new scale
-      sprite.scale(x, y);
-
-      this.x = x;
-      this.y = y;
-    },
-  };
-
   unit.select = function () {
-    unit.scale.set(1.1, 1.1);
+    sprite.scaling = new Paper.Point(1.1, 1.1);
+    sprite.position = new Paper.Point(0, -20);
     image.visible = false;
     selectedImage.visible = true;
 
     sprite.tween(
-      {
-        "position.y": 0 - 20,
-      },
-      {
-        easing: "easeInOutCubic",
-        duration: 100,
-      }
+      { scaling: [1, 1] },
+      { easing: "easeInOutCubic", duration: 120 }
     );
 
-    shadow.tween(
-      {
-        opacity: 0.15,
-      },
-      {
-        easing: "easeInOutCubic",
-        duration: 100,
-      }
-    );
+    shadow.visible = true;
   };
 
   unit.hover = function () {
-    unit.scale.set(1.1, 1.1);
+    sprite.scaling = new Paper.Point(1.1, 1.1);
   };
 
   unit.deselect = function () {
-    unit.scale.set(1, 1);
     image.visible = true;
     selectedImage.visible = false;
+    sprite.scaling = new Paper.Point(0.9, 0.9);
+    sprite.position = new Paper.Point(0, 0);
     sprite.tween(
-      {
-        "position.y": 0,
-      },
-      {
-        easing: "easeInOutCubic",
-        duration: 100,
-      }
+      { scaling: [1, 1] },
+      { easing: "easeInOutCubic", duration: 120 }
     );
 
-    shadow.tween(
-      {
-        opacity: 0,
-      },
-      {
-        easing: "easeInOutCubic",
-        duration: 100,
-      }
-    );
+    shadow.visible = false;
   };
 
   group.onMouseEnter = function (event) {
@@ -139,7 +100,7 @@ export const makeUnit = function (startPosition, state, onSelect) {
 
   group.onMouseLeave = function (event) {
     if (state.selected !== unit) {
-      unit.scale.set(1, 1);
+      sprite.scaling = new Paper.Point(1, 1);
     }
   };
 

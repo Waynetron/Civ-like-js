@@ -77,12 +77,7 @@ export const initMap = function (setSelected) {
   mapGroup.addChildren([hexGroup, imageGroup, unitGroup]);
 
   const deselectAll = function () {
-    for (const tile of state.tiles) {
-      tile.deselect();
-    }
-    for (const unit of state.units) {
-      unit.deselect();
-    }
+    state.selected?.deselect();
   };
 
   const onSelect = function (newSelected) {
