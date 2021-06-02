@@ -11,25 +11,9 @@ const makeUnitImages = function (type) {
   return [image, selectedImage];
 };
 
-const makeShadow = function () {
-  var circle = new Paper.Path.Circle({
-    center: [0, 30],
-    radius: 12,
-    fillColor: "black",
-    opacity: 0.15,
-    visible: false,
-    applyMatrix: false,
-  });
-
-  circle.scale(2.5, 1);
-
-  return circle;
-};
-
 export const makeUnit = function (startPosition, state, onSelect) {
   const type = "skeleton";
   const [image, selectedImage] = makeUnitImages(type);
-  const shadow = makeShadow();
   const group = new Paper.Group({
     applyMatrix: false,
   });
@@ -38,7 +22,7 @@ export const makeUnit = function (startPosition, state, onSelect) {
   });
   sprite.addChildren([image, selectedImage]);
   sprite.position = new Paper.Point(0, 0);
-  group.addChildren([shadow, sprite]);
+  group.addChild(sprite);
   group.position = startPosition;
 
   // make tile (and inject hex)
@@ -50,29 +34,20 @@ export const makeUnit = function (startPosition, state, onSelect) {
   };
 
   unit.moveTo = function (newPosition) {
-    // When the unit was selected, the sprite shifts up a little,
-    // the problem is, this inadvertedly affects the positioning of the group,
-    // so if the group is moved whilst the sprite is offset, it doesn't end up lining
-    // up quite right.
-    // The solution here is to reset the sprite position before moving the group.
-    sprite.position = new Paper.Point(0, 0);
     group.position = newPosition;
   };
 
   unit.moveable = makeMoveable(unit, 1);
 
   unit.select = function () {
-    sprite.scaling = new Paper.Point(1.1, 1.1);
-    sprite.position = new Paper.Point(0, -20);
+    sprite.scaling = new Paper.Point(1.2, 1.2);
     image.visible = false;
     selectedImage.visible = true;
 
     sprite.tween(
-      { scaling: [1, 1] },
+      { scaling: [1.1, 1.1] },
       { easing: "easeInOutCubic", duration: 120 }
     );
-
-    shadow.visible = true;
   };
 
   unit.hover = function () {
@@ -83,13 +58,10 @@ export const makeUnit = function (startPosition, state, onSelect) {
     image.visible = true;
     selectedImage.visible = false;
     sprite.scaling = new Paper.Point(0.9, 0.9);
-    sprite.position = new Paper.Point(0, 0);
     sprite.tween(
       { scaling: [1, 1] },
       { easing: "easeInOutCubic", duration: 120 }
     );
-
-    shadow.visible = false;
   };
 
   group.onMouseEnter = function (event) {
