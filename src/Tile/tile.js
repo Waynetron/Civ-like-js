@@ -1,5 +1,6 @@
 import { images } from "../Images/images";
 import { HEX_TYPE_DISTRIBUTION, HEX_RADIUS } from "../Map/map-constants";
+import { areEnemies } from "../Unit/unit";
 import colors from "../Util/colors";
 import { makeHex } from "./hex";
 
@@ -20,7 +21,18 @@ const makeTileImage = function (x, y, type) {
   return image;
 };
 
-export const makeTile = function (position, state, onSelect, onMove) {
+const getUnitAtTile = function (tile, units) {
+  return null;
+};
+
+export const makeTile = function (
+  position,
+  state,
+  onSelect,
+  onMove,
+  onAttack,
+  onCancel
+) {
   const [x, y] = position;
   const type = getRandomType();
   const image = makeTileImage(x, y, type);
@@ -83,8 +95,19 @@ export const makeTile = function (position, state, onSelect, onMove) {
       onSelect(tile);
       tile.select();
     } else if (state.selected.moveable) {
-      // selected item can move, so move it to this tile
-      onMove(state.selected, tile);
+      // infer that selection is a unit
+      const unitA = state.selected;
+      const unitB = getUnitAtTile(tile, state.units);
+      if (!unitB) {
+        // tile is empty, unit can move here
+        onMove(state.selected, tile);
+      } else if (areEnemies(unitA, unitB)) {
+        // tile contains enemy unit
+        onAttack(unitA, unitB, tile);
+      } else {
+        // tile contains friendly unit
+        onCancel();
+      }
     } else {
       // some other tiles is selected, select the new tile
       onSelect(tile);

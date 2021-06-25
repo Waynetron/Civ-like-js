@@ -13,8 +13,7 @@ const makeUnitImages = function (type) {
   return [image, hoverImage, selectedImage];
 };
 
-export const makeUnit = function (startPosition, state, onSelect) {
-  const type = "skeleton";
+export const makeUnit = function (type, team, startPosition, state, onSelect) {
   const [image, hoverImage, selectedImage] = makeUnitImages(type);
   const group = new Paper.Group({
     applyMatrix: false,
@@ -30,9 +29,14 @@ export const makeUnit = function (startPosition, state, onSelect) {
   // make tile (and inject hex)
   const unit = {
     type,
+    team,
     group,
     image,
     selectedImage,
+  };
+
+  unit.getPosition = function () {
+    return group.position;
   };
 
   unit.moveTo = function (newPosition) {
@@ -90,4 +94,8 @@ export const makeUnit = function (startPosition, state, onSelect) {
   };
 
   return unit;
+};
+
+export const areEnemies = function (unitA, unitB) {
+  return unitA.team !== unitB.team;
 };

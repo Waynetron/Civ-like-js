@@ -49,10 +49,17 @@ const makeTiles = function (onSelect, onMove) {
 const makeUnits = function (onSelect) {
   const newUnits = [];
 
-  const [col, row] = [0, 1];
-  const position = getPosition(col, row);
-  const unit = makeUnit(position, state, onSelect);
-  newUnits.push(unit);
+  const skeleton = makeUnit(
+    "skeleton",
+    "yellow",
+    getPosition(0, 1),
+    state,
+    onSelect
+  );
+  newUnits.push(skeleton);
+
+  const rabbit = makeUnit("rabbit", "red", getPosition(3, 5), state, onSelect);
+  newUnits.push(rabbit);
 
   return newUnits;
 };
@@ -76,23 +83,27 @@ export const initMap = function (setSelected) {
 
   mapGroup.addChildren([hexGroup, imageGroup, unitGroup]);
 
-  const deselectAll = function () {
-    state.selected?.deselect();
-  };
-
   const onSelect = function (newSelected) {
-    deselectAll();
+    state.selected?.deselect();
     setSelected(newSelected); // update external state (React)
     state.selected = newSelected; // update internal state
   };
 
   const onMove = function (unit, tile) {
     unit.moveTo(tile.getPosition());
-    unit.deselect();
     onSelect(null);
   };
 
-  state.tiles = makeTiles(onSelect, onMove);
+  const onAttack = function (attacker, defender, tile) {
+    console.log(attacker.type, "is attacking", defender.type);
+    onCancel();
+  };
+
+  const onCancel = function (attacker, defender, tile) {
+    onSelect(null);
+  };
+
+  state.tiles = makeTiles(onSelect, onMove, onAttack, onCancel);
   for (const tile of state.tiles) {
     hexGroup.addChild(tile.hex);
     if (tile.image) {
