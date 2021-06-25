@@ -1,5 +1,7 @@
 ## Untitled Civ-like game
 
+https://waynetron.github.io/Civ-like-js/
+
 A hex based strategy game where the goal is to eliminate the other team.
 
 Units are moved around in the top-down hex view. Similar to Civilisation or Advanced Wars.
