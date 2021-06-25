@@ -1,6 +1,9 @@
-# Getting Started with Create React App
+## Untitled Civ-like game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A hex based strategy game where the goal is to eliminate the other team.
+Units are moved around in the top-down hex view. Similar to Civilisation or Advanced Wars.
+When opposing units collide, the outcome is determined in a side-view battle, similar to Worms or Angry Birds.
+
 
 ## Available Scripts
 
